@@ -13,7 +13,8 @@ export default async function HomePage() {
           {posts.map((post) => (
             <li key={post._id}>
               <h2 className="text-xl font-semibold">{post.title}</h2>
-              <p className="text-gray-700">{post.content.slice(0, 100)}...</p>
+              <h3 className="text-l font-semibold">{post.subtitle}</h3>
+              <p className="text-gray-500">{post.content.slice(0, 300)}...</p>
             </li>
           ))}
         </ul>

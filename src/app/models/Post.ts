@@ -4,6 +4,7 @@ import mongoose, { Schema, model, models } from 'mongoose';
 
 const PostSchema = new Schema({
   title: { type: String, required: true },
+  subtitle: { type: String, required: true, default: 'No Subtitle' },
   slug: { type: String, required: true, unique: true }, // URL-friendly
   content: { type: String, required: true },
   author: { type: String, default: 'Anonymous' },

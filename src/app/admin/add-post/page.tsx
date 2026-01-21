@@ -6,6 +6,7 @@ const ADMIN_MODE = true; // TEMPORARY — remove when you add real auth
 
 export default function AddPostPage() {
   const [title, setTitle] = useState('');
+  const [subtitle, setSubtitle] = useState('')
   const [slug, setSlug] = useState('');
   const [content, setContent] = useState('');
   const [author, setAuthor] = useState('Admin');
@@ -25,11 +26,17 @@ export default function AddPostPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (!subtitle.trim()) {
+    setMessage('Subtitle cannot be empty.');
+    return;
+  }
+
     const res = await fetch('/api/posts', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         title,
+        subtitle: subtitle.trim(),
         slug,
         content,
         author,
@@ -42,12 +49,13 @@ export default function AddPostPage() {
     if (data.success) {
       setMessage('Post added successfully!');
       setTitle('');
+      setSubtitle('');
       setSlug('');
       setContent('');
       setTags('');
       setPublished(false);
     } else {
-      setMessage('Failed to add post.');
+      setMessage('Failed to add post.' + data.error);
     }
   };
 
@@ -66,6 +74,17 @@ export default function AddPostPage() {
             required
           />
         </div>
+        <div>
+          <label className="block font-medium mb-1">Subtitle</label>
+          <input
+            type="text"
+            value={subtitle}
+            onChange={(e) => setSubtitle(e.target.value)}
+            className="w-full bg-white text-black border border-gray-300 rounded p-2"
+            required
+          />
+        </div>
+        
         <div>
           <label className="block font-medium mb-1">Slug</label>
           <input
