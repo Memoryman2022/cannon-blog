@@ -18,7 +18,6 @@ export default function ArsenalLayout({ children }: { children: React.ReactNode 
 
         {/* Sub navigation */}
         <nav className="flex gap-6 mb-8 border-b border-gray-700 pb-2 text-white">
-          <Link href="/team-data/arsenal">Info</Link>
           <Link href="/team-data/arsenal/squad">Squad</Link>
           <Link href="/team-data/arsenal/competitions">Competitions</Link>
           <Link href="/team-data/arsenal/fixtures">Fixtures</Link>
