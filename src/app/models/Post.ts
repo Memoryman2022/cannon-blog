@@ -1,6 +1,7 @@
 // src/models/Post.ts
 import mongoose, { Schema, model, models } from 'mongoose';
 
+
 const PostSchema = new Schema({
   title: { type: String, required: true },
   slug: { type: String, required: true, unique: true }, // URL-friendly
