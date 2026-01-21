@@ -62,9 +62,7 @@ export default async function ArsenalPage() {
   return (
     <main className="p-6 bg-black min-h-screen">
       <div className="w-full mx-auto bg-white rounded shadow p-6">
-        <h1 className="text-2xl font-bold text-center mb-2">
-          {team.name} ({team.tla})
-        </h1>
+          
         <p className="text-gray-700 mb-2">
           <strong>Founded:</strong> {team.founded}
         </p>
