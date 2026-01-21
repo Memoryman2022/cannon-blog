@@ -25,6 +25,9 @@ export default function Navbar() {
         <Link href="/admin/add-post" className="text-white hover:underline">
           Add Post (Admin)
         </Link>
+        <Link href="/team-data/arsenal" className="text-white hover:underline">
+    The Club
+  </Link>
 
         <form onSubmit={handleSearch} className="ml-4 flex items-center gap-x-2">
   <input
