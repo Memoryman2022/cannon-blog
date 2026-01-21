@@ -62,7 +62,7 @@ export default function AddPostPage() {
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="w-full border border-gray-300 rounded p-2"
+            className="w-full bg-white text-black border border-gray-300 rounded p-2"
             required
           />
         </div>
@@ -72,7 +72,7 @@ export default function AddPostPage() {
             type="text"
             value={slug}
             onChange={(e) => setSlug(e.target.value)}
-            className="w-full border border-gray-300 rounded p-2"
+            className="w-full bg-white text-black border border-gray-300 rounded p-2"
             required
           />
         </div>
@@ -81,7 +81,7 @@ export default function AddPostPage() {
           <textarea
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            className="w-full border border-gray-300 rounded p-2 h-32"
+            className="w-full bg-white text-black border border-gray-300 rounded p-2 h-32"
             required
           />
         </div>
@@ -91,7 +91,7 @@ export default function AddPostPage() {
             type="text"
             value={author}
             onChange={(e) => setAuthor(e.target.value)}
-            className="w-full border border-gray-300 rounded p-2"
+            className="w-full bg-white text-black border border-gray-300 rounded p-2"
           />
         </div>
         <div>
@@ -100,7 +100,7 @@ export default function AddPostPage() {
             type="text"
             value={tags}
             onChange={(e) => setTags(e.target.value)}
-            className="w-full border border-gray-300 rounded p-2"
+            className="w-full bg-white text-black border border-gray-300 rounded p-2"
           />
         </div>
         <div className="flex items-center space-x-2">
