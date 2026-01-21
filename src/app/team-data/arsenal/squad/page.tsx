@@ -1,20 +1,18 @@
-// src/app/team-data/arsenal/squad/page.tsx
-import React from "react";
-import Image from "next/image";
-import { getFlagPath } from "@/app/lib/flagMap";
-
-const API_URL = "https://api.football-data.org/v4/teams/57";
-const API_TOKEN = process.env.NEXT_PUBLIC_FOOTBALL_API_KEY;
+import React from 'react';
+import Image from 'next/image';
+import { connectDB } from '@/app/lib/mongodb';
+import { Player } from '@/app/models/Player';
+import { getFlagPath } from '@/app/lib/flagMap';
 
 interface SquadPlayer {
-  id: number;
+  _id: string;
   name: string;
   position: string;
-  dateOfBirth: string;
+  dateOfBirth: Date;
   nationality: string;
 }
 
-function calculateAge(dateOfBirth: string): number {
+function calculateAge(dateOfBirth: Date): number {
   const today = new Date();
   const birthDate = new Date(dateOfBirth);
 
@@ -32,32 +30,25 @@ function calculateAge(dateOfBirth: string): number {
 }
 
 export default async function SquadPage() {
-  let squad: SquadPlayer[] = [];
-  let error: string | null = null;
+  await connectDB();
 
-  try {
-    const res = await fetch(API_URL, {
-      headers: { "X-Auth-Token": API_TOKEN || "" },
-      cache: "no-store",
-    });
+  const squad: SquadPlayer[] = await Player.find({ teamId: 57 })
+    .sort({ position: 1, name: 1 })
+    .lean();
 
-    if (!res.ok) {
-      throw new Error(`Failed to fetch squad (status ${res.status})`);
-    }
-
-    const data = await res.json();
-    squad = data.squad || [];
-  } catch (err: unknown) {
-    if (err instanceof Error) error = err.message;
+  if (!squad.length) {
+    return (
+      <p className="p-6 text-white">
+        No squad data available. Run the sync first.
+      </p>
+    );
   }
 
-  if (error) return <p className="text-red-500">{error}</p>;
-  if (!squad.length)
-    return <p className="text-white">No squad data available.</p>;
-
   return (
-    <section>
-      <h2 className="text-2xl font-bold text-white mb-6">First Team Squad</h2>
+    <section className="p-6">
+      <h2 className="text-2xl font-bold text-white mb-6">
+        First Team Squad
+      </h2>
 
       <div className="overflow-x-auto">
         <table className="w-full bg-white text-black rounded shadow">
@@ -71,9 +62,12 @@ export default async function SquadPage() {
           </thead>
           <tbody>
             {squad.map((player) => (
-              <tr key={player.id} className="border-t hover:bg-gray-50">
+              <tr
+                key={player._id}
+                className="border-t hover:bg-gray-50"
+              >
                 <td className="p-3 font-medium">{player.name}</td>
-                <td className="p-3">{player.position || "—"}</td>
+                <td className="p-3">{player.position || '—'}</td>
                 <td className="p-3 flex items-center gap-2">
                   {getFlagPath(player.nationality) && (
                     <Image
@@ -84,8 +78,11 @@ export default async function SquadPage() {
                       className="rounded-sm"
                     />
                   )}
+                  <span>{player.nationality}</span>
                 </td>
-                <td className="p-3">{calculateAge(player.dateOfBirth)}</td>
+                <td className="p-3">
+                  {calculateAge(player.dateOfBirth)}
+                </td>
               </tr>
             ))}
           </tbody>

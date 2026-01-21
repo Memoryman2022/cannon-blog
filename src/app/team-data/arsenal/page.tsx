@@ -2,7 +2,7 @@
 import React from "react";
 
 const API_URL = "https://api.football-data.org/v4/teams/57";
-const API_TOKEN = process.env.NEXT_PUBLIC_FOOTBALL_API_KEY; // server-side key
+const API_TOKEN = process.env.FOOTBALL_DATA_API_KEY; // server-side key
 
 interface TeamData {
   name: string;
