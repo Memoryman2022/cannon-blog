@@ -3,6 +3,8 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
+
 
 export default function Navbar() {
   const [query, setQuery] = useState('');
@@ -16,7 +18,13 @@ export default function Navbar() {
 
   return (
     <nav className="p-4 bg-red-800 flex flex-col md:flex-row justify-between items-center px-[300px] gap-2 md:gap-0">
-      <h1 className="font-bold text-xl text-white">Cannon Blog</h1>
+      <Image src={"/Arsenal.png"}
+       alt="Arsenal"
+       className='w-40px'
+        width={80}
+        height={80}>
+
+        </Image>
 
       <div className="flex items-center space-x-4">
         <Link href="/" className="text-white hover:underline">

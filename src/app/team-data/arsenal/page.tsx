@@ -1,5 +1,7 @@
 // src/app/team-data/arsenal/page.tsx
 import React from "react";
+import Image from 'next/image';
+
 
 const API_URL = "https://api.football-data.org/v4/teams/57";
 const API_TOKEN = process.env.FOOTBALL_DATA_API_KEY; // server-side key
@@ -60,7 +62,6 @@ export default async function ArsenalPage() {
   return (
     <main className="p-6 bg-black min-h-screen">
       <div className="w-full mx-auto bg-white rounded shadow p-6">
-        <img src={team.crest} alt={team.name} className="h-24 mx-auto mb-4" />
         <h1 className="text-2xl font-bold text-center mb-2">
           {team.name} ({team.tla})
         </h1>

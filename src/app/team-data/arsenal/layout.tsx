@@ -1,5 +1,6 @@
 // src/app/team-data/arsenal/layout.tsx
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function ArsenalLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -7,11 +8,11 @@ export default function ArsenalLayout({ children }: { children: React.ReactNode 
       <div className="max-w-5xl mx-auto">
         {/* Header */}
         <div className="flex items-center gap-4 mb-6">
-          <img
-            src="https://crests.football-data.org/57.png"
-            alt="Arsenal"
-            className="h-20"
-          />
+          <Image src="/Arsenal.png"
+                         alt="Arsenal"
+                         className='w-40px'
+                          width={100}
+                          height={100}></Image>
           <h1 className="text-3xl font-bold text-white">Arsenal FC</h1>
         </div>
 
