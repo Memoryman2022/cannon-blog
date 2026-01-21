@@ -35,7 +35,7 @@ export default function AddPostPage() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        title,
+        title: title.trim().toUpperCase(), 
         subtitle: subtitle.trim(),
         slug,
         content,
