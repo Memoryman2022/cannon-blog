@@ -76,7 +76,7 @@ export default async function CompetitionsPage() {
 
   return (
     <main className="p-6 bg-black min-h-screen text-white">
-      <h1 className="text-3xl font-bold text-red-800 mb-6">Arsenal Competitions</h1>
+      <h1 className="text-3xl font-bold text-white mb-6">Competitions</h1>
 
       <CompetitionsTabs
         eplStandings={eplStandings}
