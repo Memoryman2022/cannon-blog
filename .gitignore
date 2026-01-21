@@ -40,4 +40,3 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# mongodb+srv://rlacannon_db_user:CFKeeZGkoQxAehc9@cannonblog.urmcik9.mongodb.net/
