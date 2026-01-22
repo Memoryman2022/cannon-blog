@@ -9,6 +9,7 @@ export default function AddPostPage() {
   const [subtitle, setSubtitle] = useState('')
   const [slug, setSlug] = useState('');
   const [content, setContent] = useState('');
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const [author, setAuthor] = useState('Admin');
   const [tags, setTags] = useState('');
   const [published, setPublished] = useState(false);
@@ -23,41 +24,61 @@ export default function AddPostPage() {
     );
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+ const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
 
-    if (!subtitle.trim()) {
-    setMessage('Subtitle cannot be empty.');
-    return;
-  }
+  let imageUrl: string | null = null;
 
-    const res = await fetch('/api/posts', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        title: title.trim().toUpperCase(), 
-        subtitle: subtitle.trim(),
-        slug,
-        content,
-        author,
-        tags: tags.split(',').map((t) => t.trim()),
-        published,
-      }),
+  if (imageFile) {
+    const formData = new FormData();
+    formData.append("file", imageFile);
+
+    const uploadRes = await fetch("/api/upload-image", {
+      method: "POST",
+      body: formData,
     });
 
-    const data = await res.json();
-    if (data.success) {
-      setMessage('Post added successfully!');
-      setTitle('');
-      setSubtitle('');
-      setSlug('');
-      setContent('');
-      setTags('');
-      setPublished(false);
-    } else {
-      setMessage('Failed to add post.' + data.error);
+    const uploadData = await uploadRes.json();
+
+    if (!uploadRes.ok) {
+      setMessage("Image upload failed");
+      return;
     }
-  };
+
+    imageUrl = uploadData.url;
+  }
+
+  const res = await fetch("/api/posts", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      title: title.trim().toUpperCase(),
+      subtitle: subtitle.trim(),
+      slug,
+      content,
+      imageUrl, 
+      author,
+      tags: tags.split(",").map((t) => t.trim()),
+      published,
+    }),
+  });
+
+  const data = await res.json();
+
+  if (data.success) {
+    setMessage("Post added successfully!");
+    setTitle("");
+    setSubtitle("");
+    setSlug("");
+    setContent("");
+    setImageFile(null);
+    setTags("");
+    setPublished(false);
+  } else {
+    setMessage("Failed to add post: " + data.error);
+  }
+};
+
 
   return (
     <div className="max-w-xl mx-auto p-6">
@@ -104,6 +125,16 @@ export default function AddPostPage() {
             required
           />
         </div>
+        <div>
+  <label className="block font-medium mb-1">Add Image</label>
+  <input
+    type="file"
+    accept="image/*"
+    onChange={(e) => setImageFile(e.target.files?.[0] || null)}
+    className="w-full"
+  />
+</div>
+
         <div>
           <label className="block font-medium mb-1">Author</label>
           <input

@@ -25,6 +25,7 @@ export async function POST(req: NextRequest) {
       author: data.author,
       tags: data.tags,
       published: data.published,
+      imageUrl: data.imageUrl,
       createdAt: new Date(),
       updatedAt: new Date(),
     });
