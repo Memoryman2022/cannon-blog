@@ -57,7 +57,7 @@ export default function Sidebar() {
 
       {/* Sidebar panel */}
       <aside
-        className={`fixed top-30  left-0 h-full w-64 bg-gray-900 text-white p-6 shadow-lg transform transition-transform duration-300 z-40
+        className={`fixed top-30  left-0 h-full w-64 opacity-100 text-white p-6 shadow-lg transform transition-transform duration-300 z-40
         ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}
       >
         <h2 className="font-bold mb-4 text-lg">Filter Posts by Tags</h2>
