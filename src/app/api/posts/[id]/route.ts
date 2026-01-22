@@ -6,18 +6,14 @@ export async function PUT(
   req: NextRequest,
   context: { params: { id: string } | Promise<{ id: string }> }
 ) {
-  console.log('PUT /api/posts/[id] called');
-  console.log('Raw params:', context.params);
 
   await connectDB();
 
   // ⚡ Unwrap params safely
   const params = context.params instanceof Promise ? await context.params : context.params;
   const id = params.id;
-  console.log('Resolved id for update:', id);
 
   const data = await req.json();
-  console.log('PUT data received:', data);
 
   try {
     const post = await Post.findByIdAndUpdate(
@@ -27,7 +23,6 @@ export async function PUT(
     ).lean();
 
     if (!post) {
-      console.log('Post not found during update for ID:', id);
       return NextResponse.json({ success: false, error: 'Post not found' }, { status: 404 });
     }
 
@@ -38,7 +33,6 @@ export async function PUT(
       updatedAt: post.updatedAt.toISOString(),
     };
 
-    console.log('Post updated successfully:', sanitizedPost.title);
     return NextResponse.json({ success: true, post: sanitizedPost });
   } catch (err: unknown) {
     console.error('Error updating post:', err);

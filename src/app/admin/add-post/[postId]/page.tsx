@@ -14,12 +14,10 @@ export default async function EditPostPage({ params }: PageProps) {
 
   await connectDB();
 
-  console.log('Fetching post with ID:', postId);
 
   const postDoc = await Post.findById(postId).lean(); // lean() gives a plain object
 
   if (!postDoc) {
-    console.log('Post not found for ID:', postId);
     notFound();
   }
 
@@ -31,7 +29,6 @@ export default async function EditPostPage({ params }: PageProps) {
     updatedAt: postDoc.updatedAt.toISOString(),
   };
 
-  console.log('Post found:', post.title);
 
   return <AddPostPage post={post} />;
 }
