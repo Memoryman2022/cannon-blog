@@ -1,18 +1,42 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
-const ADMIN_MODE = true; // TEMPORARY — remove when you add real auth
+const ADMIN_MODE = true;
 
-export default function AddPostPage() {
-  const [title, setTitle] = useState('');
-  const [subtitle, setSubtitle] = useState('')
-  const [slug, setSlug] = useState('');
-  const [content, setContent] = useState('');
+interface PostType {
+  _id: string;
+  title: string;
+  subtitle?: string;
+  slug: string;
+  content: string;
+  imageUrl?: string;
+  author?: string;
+  tags?: string[];
+  published: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface Props {
+  post?: PostType; // server passes this in
+}
+
+export default function AddPostPage({ post }: Props) {
+  const router = useRouter();
+
+  // Initialize state from the passed-in `post` if it exists
+  const [title, setTitle] = useState(post?.title || '');
+  const [subtitle, setSubtitle] = useState(post?.subtitle || '');
+  const [slug, setSlug] = useState(post?.slug || '');
+  const [content, setContent] = useState(post?.content || '');
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [author, setAuthor] = useState('Admin');
-  const [tags, setTags] = useState('');
-  const [published, setPublished] = useState(false);
+  const [imageUrl, setImageUrl] = useState<string | null>(post?.imageUrl || null);
+  const [author, setAuthor] = useState(post?.author || 'Admin');
+  const [tags, setTags] = useState(post?.tags?.join(', ') || '');
+  const [published, setPublished] = useState(post?.published || false);
   const [message, setMessage] = useState('');
 
   if (!ADMIN_MODE) {
@@ -24,67 +48,74 @@ export default function AddPostPage() {
     );
   }
 
- const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-  let imageUrl: string | null = null;
+    let uploadedUrl = imageUrl;
 
-  if (imageFile) {
-    const formData = new FormData();
-    formData.append("file", imageFile);
+    if (imageFile) {
+      const formData = new FormData();
+      formData.append('file', imageFile);
 
-    const uploadRes = await fetch("/api/upload-image", {
-      method: "POST",
-      body: formData,
-    });
+      const uploadRes = await fetch('/api/upload-image', {
+        method: 'POST',
+        body: formData,
+      });
+      const uploadData = await uploadRes.json();
 
-    const uploadData = await uploadRes.json();
-
-    if (!uploadRes.ok) {
-      setMessage("Image upload failed");
-      return;
+      if (!uploadRes.ok) {
+        setMessage('Image upload failed');
+        return;
+      }
+      uploadedUrl = uploadData.url;
     }
 
-    imageUrl = uploadData.url;
-  }
+    // Use the post _id passed from server to determine update vs create
+    const method = post?._id ? 'PUT' : 'POST';
+    const url = post?._id ? `/api/posts/${post._id}` : '/api/posts';
 
-  const res = await fetch("/api/posts", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      title: title.trim().toUpperCase(),
-      subtitle: subtitle.trim(),
-      slug,
-      content,
-      imageUrl, 
-      author,
-      tags: tags.split(",").map((t) => t.trim()),
-      published,
-    }),
-  });
+    const res = await fetch(url, {
+      method,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        title: title.trim().toUpperCase(),
+        subtitle: subtitle.trim(),
+        slug,
+        content,
+        imageUrl: uploadedUrl,
+        author,
+        tags: tags.split(',').map((t) => t.trim()),
+        published,
+      }),
+    });
 
-  const data = await res.json();
+    const data = await res.json();
 
-  if (data.success) {
-    setMessage("Post added successfully!");
-    setTitle("");
-    setSubtitle("");
-    setSlug("");
-    setContent("");
-    setImageFile(null);
-    setTags("");
-    setPublished(false);
-  } else {
-    setMessage("Failed to add post: " + data.error);
-  }
-};
-
+    if (data.success) {
+      setMessage(post?._id ? 'Post updated successfully!' : 'Post added successfully!');
+      if (!post?._id) {
+        setTitle('');
+        setSubtitle('');
+        setSlug('');
+        setContent('');
+        setImageFile(null);
+        setImageUrl(null);
+        setTags('');
+        setPublished(false);
+      }
+      router.refresh();
+    } else {
+      setMessage('Failed: ' + data.error);
+    }
+  };
 
   return (
     <div className="max-w-xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-4">Add New Post</h1>
+      <h1 className="text-2xl font-bold mb-4">{post?._id ? 'Edit Post' : 'Add New Post'}</h1>
       {message && <p className="mb-4 text-green-600">{message}</p>}
+
       <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Title */}
         <div>
           <label className="block font-medium mb-1">Title</label>
           <input
@@ -95,6 +126,8 @@ export default function AddPostPage() {
             required
           />
         </div>
+
+        {/* Subtitle */}
         <div>
           <label className="block font-medium mb-1">Subtitle</label>
           <input
@@ -102,10 +135,10 @@ export default function AddPostPage() {
             value={subtitle}
             onChange={(e) => setSubtitle(e.target.value)}
             className="w-full bg-white text-black border border-gray-300 rounded p-2"
-            required
           />
         </div>
-        
+
+        {/* Slug */}
         <div>
           <label className="block font-medium mb-1">Slug</label>
           <input
@@ -116,6 +149,8 @@ export default function AddPostPage() {
             required
           />
         </div>
+
+        {/* Content */}
         <div>
           <label className="block font-medium mb-1">Content</label>
           <textarea
@@ -125,16 +160,31 @@ export default function AddPostPage() {
             required
           />
         </div>
-        <div>
-  <label className="block font-medium mb-1">Add Image</label>
-  <input
-    type="file"
-    accept="image/*"
-    onChange={(e) => setImageFile(e.target.files?.[0] || null)}
-    className="w-full"
-  />
-</div>
 
+        {/* Image preview */}
+        {imageUrl && (
+          <div className="mb-2 relative w-32 h-32">
+            <Image
+              src={imageUrl}
+              alt="Preview"
+              fill
+              className="object-cover rounded"
+              sizes="128px"
+            />
+          </div>
+        )}
+
+        {/* Image upload */}
+        <div>
+          <label className="block font-medium mb-1">Add / Replace Image</label>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) => setImageFile(e.target.files?.[0] || null)}
+          />
+        </div>
+
+        {/* Author */}
         <div>
           <label className="block font-medium mb-1">Author</label>
           <input
@@ -144,6 +194,8 @@ export default function AddPostPage() {
             className="w-full bg-white text-black border border-gray-300 rounded p-2"
           />
         </div>
+
+        {/* Tags */}
         <div>
           <label className="block font-medium mb-1">Tags (comma separated)</label>
           <input
@@ -153,6 +205,8 @@ export default function AddPostPage() {
             className="w-full bg-white text-black border border-gray-300 rounded p-2"
           />
         </div>
+
+        {/* Publish */}
         <div className="flex items-center space-x-2">
           <input
             type="checkbox"
@@ -161,11 +215,12 @@ export default function AddPostPage() {
           />
           <label>Publish now</label>
         </div>
+
         <button
           type="submit"
           className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
         >
-          Add Post
+          {post?._id ? 'Update Post' : 'Add Post'}
         </button>
       </form>
     </div>

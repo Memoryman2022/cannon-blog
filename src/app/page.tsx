@@ -3,13 +3,16 @@
 import { connectDB } from './lib/mongodb';
 import { Post } from './models/Post';
 import Image from 'next/image';
+import Link from 'next/link';
 
 interface Props {
-  searchParams?: Promise<{ search?: string }>; // mark as Promise
+  searchParams?: Promise<{ search?: string }>;
 }
 
+const ADMIN_MODE = true; // TEMPORARY — replace with real auth
+
 export default async function HomePage({ searchParams }: Props) {
-  const params = await searchParams; // unwrap the promise
+  const params = await searchParams;
   const searchQuery = params?.search?.trim() || '';
 
   await connectDB();
@@ -55,21 +58,27 @@ export default async function HomePage({ searchParams }: Props) {
               </h2>
 
               {post.subtitle && (
-                <h3 className="text-gray-600 mb-2 uppercase">
-                  {post.subtitle}
-                </h3>
+                <h3 className="text-gray-600 mb-2 uppercase">{post.subtitle}</h3>
               )}
 
               <p className="text-gray-700 text-sm mb-3">
                 {post.content.slice(0, 150)}...
               </p>
 
-              <div className="flex justify-between items-center text-sm text-gray-400">
+              <div className="flex justify-between items-center text-sm text-gray-400 mb-2">
                 <span>{post.author || 'Anonymous'}</span>
                 <span>
                   {new Date(post.createdAt).toLocaleDateString('en-GB')}
                 </span>
               </div>
+
+              {/* ADMIN EDIT BUTTON */}
+              {ADMIN_MODE && (
+                <Link href={`/admin/add-post/${post._id}`} className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600 text-sm">
+  Edit Post
+</Link>
+
+              )}
             </div>
           ))}
         </div>
