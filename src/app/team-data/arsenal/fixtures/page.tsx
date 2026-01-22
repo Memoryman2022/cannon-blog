@@ -26,7 +26,7 @@ async function fetchFixtures(): Promise<Match[]> {
     {
       headers: { "X-Auth-Token": API_TOKEN || "" },
       cache: "no-store",
-    }
+    },
   );
   if (!res.ok) throw new Error(`Failed to fetch fixtures: ${res.status}`);
   const data: MatchesResponse = await res.json();
@@ -51,14 +51,27 @@ export default async function ArsenalFixturesPage() {
     const { homeTeam, awayTeam, score } = match;
     const isArsenalHome = homeTeam.id === ARSENAL_ID;
 
-    if (score.fullTime.home === null || score.fullTime.away === null) return null;
+    if (score.fullTime.home === null || score.fullTime.away === null)
+      return null;
 
-    const arsenalGoals = isArsenalHome ? score.fullTime.home : score.fullTime.away;
-    const opponentGoals = isArsenalHome ? score.fullTime.away : score.fullTime.home;
+    const arsenalGoals = isArsenalHome
+      ? score.fullTime.home
+      : score.fullTime.away;
+    const opponentGoals = isArsenalHome
+      ? score.fullTime.away
+      : score.fullTime.home;
 
-    if (arsenalGoals > opponentGoals) return <span className="w-4 h-4 inline-block rounded-full bg-green-500"></span>;
-    if (arsenalGoals < opponentGoals) return <span className="w-4 h-4 inline-block rounded-full bg-red-500"></span>;
-    return <span className="w-4 h-4 inline-block rounded-full bg-gray-500"></span>;
+    if (arsenalGoals > opponentGoals)
+      return (
+        <span className="w-4 h-4 inline-block rounded-full bg-green-500"></span>
+      );
+    if (arsenalGoals < opponentGoals)
+      return (
+        <span className="w-4 h-4 inline-block rounded-full bg-red-500"></span>
+      );
+    return (
+      <span className="w-4 h-4 inline-block rounded-full bg-gray-500"></span>
+    );
   };
 
   return (
@@ -77,13 +90,16 @@ export default async function ArsenalFixturesPage() {
                 <th className="px-4 py-2">Home</th>
                 <th className="px-4 py-2">Score</th>
                 <th className="px-4 py-2">Away</th>
-                <th className="px-2 py-2"></th> {/* Win/Loss/Draw column */}
+                <th className="px-2 py-2">{/* Win/Loss/Draw column */}</th>
               </tr>
             </thead>
+
             <tbody className="divide-y divide-gray-700 bg-white text-black">
               {matches.map((match) => (
                 <tr key={match.id} className="hover:bg-gray-300">
-                  <td className="px-4 py-2">{new Date(match.utcDate).toLocaleDateString()}</td>
+                  <td className="px-4 py-2">
+                    {new Date(match.utcDate).toLocaleDateString()}
+                  </td>
                   <td className="px-4 py-2">{match.competition.name}</td>
                   <td className="px-4 py-2">{match.homeTeam.name}</td>
                   <td className="px-4 py-2">
@@ -92,7 +108,9 @@ export default async function ArsenalFixturesPage() {
                       : "-"}
                   </td>
                   <td className="px-4 py-2">{match.awayTeam.name}</td>
-                  <td className="px-2 py-2 text-center">{getResultIcon(match)}</td>
+                  <td className="px-2 py-2 text-center">
+                    {getResultIcon(match)}
+                  </td>
                 </tr>
               ))}
             </tbody>

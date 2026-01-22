@@ -20,6 +20,21 @@ interface PostType {
   updatedAt: string;
 }
 
+const PRESET_TAGS = [
+  "News",
+  "Opinion",
+  "Transfer",
+  "Tactics",
+  "Finances",
+  "Match",
+  "Injury",
+  "UCL",
+  "EPL",
+  "ELC",
+  "FACup",
+];
+
+
 interface Props {
   post?: PostType; // server passes this in
 }
@@ -35,7 +50,7 @@ export default function AddPostPage({ post }: Props) {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(post?.imageUrl || null);
   const [author, setAuthor] = useState(post?.author || 'Admin');
-  const [tags, setTags] = useState(post?.tags?.join(', ') || '');
+const [tags, setTags] = useState<string[]>(post?.tags || []);
   const [published, setPublished] = useState(post?.published || false);
   const [message, setMessage] = useState('');
 
@@ -84,7 +99,7 @@ export default function AddPostPage({ post }: Props) {
         content,
         imageUrl: uploadedUrl,
         author,
-        tags: tags.split(',').map((t) => t.trim()),
+        tags,
         published,
       }),
     });
@@ -100,7 +115,7 @@ export default function AddPostPage({ post }: Props) {
         setContent('');
         setImageFile(null);
         setImageUrl(null);
-        setTags('');
+        setTags([]);
         setPublished(false);
       }
       router.refresh();
@@ -176,7 +191,7 @@ export default function AddPostPage({ post }: Props) {
 
         {/* Image upload */}
         <div>
-          <label className="block font-medium mb-1">Add / Replace Image</label>
+          
           <input
             type="file"
             accept="image/*"
@@ -197,14 +212,34 @@ export default function AddPostPage({ post }: Props) {
 
         {/* Tags */}
         <div>
-          <label className="block font-medium mb-1">Tags (comma separated)</label>
-          <input
-            type="text"
-            value={tags}
-            onChange={(e) => setTags(e.target.value)}
-            className="w-full bg-white text-black border border-gray-300 rounded p-2"
-          />
-        </div>
+  <label className="block font-medium mb-1">Tags</label>
+  <div className="flex flex-wrap gap-2">
+    {PRESET_TAGS.map((tag) => {
+      const isSelected = tags.includes(tag);
+      return (
+        <button
+          key={tag}
+          type="button"
+          onClick={() => {
+            setTags((prev) =>
+              prev.includes(tag)
+                ? prev.filter((t) => t !== tag)
+                : [...prev, tag]
+            );
+          }}
+          className={`px-3 py-1 rounded border ${
+            isSelected
+              ? "bg-blue-600 text-white border-blue-600"
+              : "bg-white text-black border-gray-300"
+          }`}
+        >
+          {tag}
+        </button>
+      );
+    })}
+  </div>
+</div>
+
 
         {/* Publish */}
         <div className="flex items-center space-x-2">
