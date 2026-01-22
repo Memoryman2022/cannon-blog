@@ -13,6 +13,7 @@ const PRESET_TAGS = [
   "FACup",
   "Transfer",
   "Tactics",
+  "Stats",
   "Finances",
   "Match",
 ];

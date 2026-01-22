@@ -18,11 +18,11 @@ export default function Navbar() {
 
   return (
     <nav className="p-4 bg-red-800 flex flex-col md:flex-row justify-between items-center px-[300px] gap-2 md:gap-0">
-      <Image src={"/Arsenal.png"}
+      <Image src={"/All-About-Arsenal.png"}
        alt="Arsenal"
        className='w-40px'
-        width={80}
-        height={80}>
+        width={120}
+        height={120}>
 
         </Image>
 
