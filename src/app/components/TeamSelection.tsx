@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
+import { formations, Formation } from '../lib/formations';
 
 type Position = {
   id: string;
@@ -12,47 +13,6 @@ type Position = {
   role: 'GK' | 'DEF' | 'MID' | 'FWD';
   player?: string; // optional player name
 };
-
-type Formation = {
-  name: string;
-  positions: Position[];
-};
-
-// Sample formations
-const formations: Formation[] = [
-  {
-    name: '4-4-2',
-    positions: [
-      { id: 'gk', x: 50, y: 95, role: 'GK' },
-      { id: 'def1', x: 20, y: 75, role: 'DEF' },
-      { id: 'def2', x: 40, y: 75, role: 'DEF' },
-      { id: 'def3', x: 60, y: 75, role: 'DEF' },
-      { id: 'def4', x: 80, y: 75, role: 'DEF' },
-      { id: 'mid1', x: 20, y: 50, role: 'MID' },
-      { id: 'mid2', x: 40, y: 50, role: 'MID' },
-      { id: 'mid3', x: 60, y: 50, role: 'MID' },
-      { id: 'mid4', x: 80, y: 50, role: 'MID' },
-      { id: 'fwd1', x: 35, y: 25, role: 'FWD' },
-      { id: 'fwd2', x: 65, y: 25, role: 'FWD' },
-    ],
-  },
-  {
-    name: '4-3-3',
-    positions: [
-      { id: 'gk', x: 50, y: 95, role: 'GK' },
-      { id: 'def1', x: 15, y: 75, role: 'DEF' },
-      { id: 'def2', x: 35, y: 75, role: 'DEF' },
-      { id: 'def3', x: 65, y: 75, role: 'DEF' },
-      { id: 'def4', x: 85, y: 75, role: 'DEF' },
-      { id: 'mid1', x: 30, y: 50, role: 'MID' },
-      { id: 'mid2', x: 50, y: 50, role: 'MID' },
-      { id: 'mid3', x: 70, y: 50, role: 'MID' },
-      { id: 'fwd1', x: 20, y: 25, role: 'FWD' },
-      { id: 'fwd2', x: 50, y: 20, role: 'FWD' },
-      { id: 'fwd3', x: 80, y: 25, role: 'FWD' },
-    ],
-  },
-];
 
 // Drag item type
 const ItemTypes = {
@@ -115,9 +75,10 @@ const PositionSlot = ({
 
 export default function TeamSelection() {
   const [formationIndex, setFormationIndex] = useState(0);
-  const [currentFormation, setCurrentFormation] = useState(
-    formations[formationIndex]
-  );
+  const [currentFormation, setCurrentFormation] = useState<Formation & { positions: (Position & { player?: string })[] }>(
+  formations[formationIndex]
+);
+
 
   const handleFormationChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const index = parseInt(e.target.value, 10);
