@@ -18,9 +18,10 @@ export default function Navbar() {
 
   return (
 <nav className="p-4 bg-red-800 flex flex-col md:flex-row md:items-center md:justify-between px-[300px] gap-4">
-    
+    <div className='flex flex-row items-center'>
+
     {/* LEFT: Logo (Home link) */}
-    <Link href="/" className="flex items-center">
+    <Link href="/" className="flex items-center pr-3">
       <Image
         src="/All-About-Arsenal.png"
         alt="Arsenal"
@@ -30,12 +31,13 @@ export default function Navbar() {
         priority
       />
     </Link>
+      <Link href="/admin/add-post" className="text-black p-1 rounded bg-yellow-400 hover:underline">
+        Add Post (Admin)
+      </Link>
+    </div>
 
     {/* RIGHT: Nav links + search */}
 <div className="flex items-center gap-6 md:justify-end">
-      <Link href="/admin/add-post" className="text-white hover:underline">
-        Add Post (Admin)
-      </Link>
 
       <Link href="/team-data/arsenal" className="text-white hover:underline">
         The Club
