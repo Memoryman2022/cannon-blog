@@ -14,6 +14,9 @@ type Position = {
   player?: string; // optional player name
 };
 
+type PositionWithPlayer = Position & { player?: string };
+
+
 // Drag item type
 const ItemTypes = {
   KIT: 'kit',
@@ -50,7 +53,7 @@ const PositionSlot = ({
   pos,
   onDrop,
 }: {
-  pos: Position;
+  pos: PositionWithPlayer;
   onDrop: (fromId: string, toId: string) => void;
 }) => {
   const [, drop] = useDrop(() => ({
@@ -75,9 +78,14 @@ const PositionSlot = ({
 
 export default function TeamSelection() {
   const [formationIndex, setFormationIndex] = useState(0);
-  const [currentFormation, setCurrentFormation] = useState<Formation & { positions: (Position & { player?: string })[] }>(
-  formations[formationIndex]
-);
+  const [currentFormation, setCurrentFormation] = useState<{
+  name: string;
+  positions: PositionWithPlayer[];
+}>(() => ({
+  name: formations[formationIndex].name,
+  positions: formations[formationIndex].positions.map((p) => ({ ...p })),
+}));
+
 
 
   const handleFormationChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
