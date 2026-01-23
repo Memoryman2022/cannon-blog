@@ -38,7 +38,9 @@ export default function Navbar() {
 
     {/* RIGHT: Nav links + search */}
 <div className="flex items-center gap-6 md:justify-end">
-
+      <Link href="/components/team-selection" className="text-white hover:underline">
+        Team Selection
+      </Link>
       <Link href="/team-data/arsenal" className="text-white hover:underline">
         The Club
       </Link>
