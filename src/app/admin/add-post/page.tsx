@@ -6,7 +6,7 @@ import Image from 'next/image';
 
 const ADMIN_MODE = true;
 
-interface PostType {
+export interface PostType {
   _id: string;
   title: string;
   subtitle?: string;
@@ -31,7 +31,7 @@ const PRESET_TAGS = [
   "UCL",
   "EPL",
   "ELC",
-  "FACup",
+  "FA Cup",
 ];
 
 

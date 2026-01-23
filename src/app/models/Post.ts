@@ -9,7 +9,7 @@ const PostSchema = new Schema({
   content: { type: String, required: true },
   imageUrl: {type: String},
   author: { type: String, default: 'Anonymous' },
-  tags: { type: [String], default: [] },
+  tags: { type: [String], default: [], index: true },
   published: { type: Boolean, default: false },
   },
   { timestamps: true }

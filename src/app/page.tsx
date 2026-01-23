@@ -5,27 +5,42 @@ import { Post } from './models/Post';
 import Image from 'next/image';
 import Link from 'next/link';
 
+
 interface Props {
-  searchParams?: Promise<{ search?: string }>;
+  searchParams?: Promise<{ search?: string; tags?: string; }>;
 }
 
 const ADMIN_MODE = true; // TEMPORARY — replace with real auth
 
+type MongoFilter = {
+  [key: string]: unknown;
+};
+
 export default async function HomePage({ searchParams }: Props) {
   const params = await searchParams;
   const searchQuery = params?.search?.trim() || '';
+  const selectedTags = params?.tags
+    ? params.tags.split(',').filter(Boolean)
+    : [];
 
   await connectDB();
+   
+  const filter: MongoFilter = {
+    published: true,
+  };
 
-  const filter = searchQuery
-    ? {
-        published: true,
-        $or: [
-          { title: { $regex: searchQuery, $options: 'i' } },
-          { subtitle: { $regex: searchQuery, $options: 'i' } },
-        ],
-      }
-    : { published: true };
+  // Search text
+  if (searchQuery) {
+    filter.$or = [
+      { title: { $regex: searchQuery, $options: 'i' } },
+      { subtitle: { $regex: searchQuery, $options: 'i' } },
+    ];
+  }
+
+  // Tag filtering
+  if (selectedTags.length > 0) {
+    filter.tags = { $in: selectedTags };
+  }
 
   const posts = await Post.find(filter).sort({ createdAt: -1 }).lean();
 
